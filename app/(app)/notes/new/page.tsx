@@ -40,7 +40,7 @@ export default function NewNotePage() {
       }
 
       const { id } = await res.json();
-      router.push(`/notes/${id}`);
+      router.push(`/notes/${id}/view`);
     } finally {
       setLoading(false);
     }
