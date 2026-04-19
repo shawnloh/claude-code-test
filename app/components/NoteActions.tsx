@@ -23,14 +23,14 @@ export default function NoteActions({ noteId }: Props) {
       <div className="flex gap-2">
         <Link
           href={`/notes/${noteId}/edit`}
-          className="text-sm border border-neutral-300 rounded-lg px-3 py-1.5 hover:bg-neutral-50 transition-colors"
+          className="text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
         >
           Edit
         </Link>
         <button
           type="button"
           onClick={() => dialogRef.current?.showModal()}
-          className="text-sm border border-red-300 text-red-600 rounded-lg px-3 py-1.5 hover:bg-red-50 transition-colors"
+          className="cursor-pointer text-sm border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 rounded-lg px-3 py-1.5 hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
         >
           Delete
         </button>
@@ -38,22 +38,24 @@ export default function NoteActions({ noteId }: Props) {
 
       <dialog
         ref={dialogRef}
-        className="rounded-lg p-6 shadow-xl backdrop:bg-black/40 max-w-sm w-full"
+        onClick={(e) => { if (e.target === dialogRef.current) dialogRef.current?.close(); }}
+        className="m-auto rounded-lg p-6 shadow-xl backdrop:bg-black/50 max-w-sm w-full text-neutral-900 dark:text-neutral-100"
+        style={{ background: "var(--background)", color: "var(--foreground)" }}
       >
         <h2 className="text-lg font-semibold mb-2">Delete note?</h2>
-        <p className="text-sm text-neutral-600 mb-6">This action cannot be undone.</p>
+        <p className="text-sm text-neutral-500 mb-6">This action cannot be undone.</p>
         <div className="flex justify-end gap-2">
           <button
             type="button"
             onClick={() => dialogRef.current?.close()}
-            className="text-sm border border-neutral-300 rounded-lg px-3 py-1.5 hover:bg-neutral-50 transition-colors"
+            className="cursor-pointer text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleDelete}
-            className="text-sm bg-red-600 text-white rounded-lg px-3 py-1.5 hover:bg-red-700 transition-colors"
+            className="cursor-pointer text-sm bg-red-600 text-white rounded-lg px-3 py-1.5 hover:bg-red-700 transition-colors"
           >
             Delete
           </button>

@@ -16,7 +16,7 @@ function ToolbarButton({ onClick, active, title, children }: ToolbarButtonProps)
       type="button"
       title={title}
       onClick={onClick}
-      className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+      className={`cursor-pointer px-2 py-1 rounded text-sm font-medium transition-colors ${
         active
           ? "bg-foreground text-background"
           : "text-neutral-600 hover:bg-neutral-100 hover:text-foreground"

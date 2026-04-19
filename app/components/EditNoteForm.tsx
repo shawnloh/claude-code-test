@@ -79,14 +79,14 @@ export default function EditNoteForm({ noteId, initialTitle, initialContent }: P
         <button
           type="button"
           onClick={() => router.push(`/notes/${noteId}/view`)}
-          className="border border-neutral-300 rounded-lg px-4 py-2 text-sm font-medium hover:bg-neutral-50 transition-colors"
+          className="cursor-pointer border border-neutral-300 rounded-lg px-4 py-2 text-sm font-medium hover:bg-neutral-50 transition-colors"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="bg-foreground text-background rounded-lg px-4 py-2 text-sm font-medium hover:opacity-80 disabled:opacity-50 transition-opacity"
+          className="cursor-pointer bg-foreground text-background rounded-lg px-4 py-2 text-sm font-medium hover:opacity-80 disabled:opacity-50 transition-opacity"
         >
           {loading ? "Saving…" : "Save Changes"}
         </button>
