@@ -63,6 +63,8 @@ Users can:
 
 Authentication state is accessible on server (for SSR) and on client (for protected UI).
 
+The `nextCookies` plugin from `better-auth/next-js` is added as the last plugin in the better-auth config. This ensures `Set-Cookie` headers are automatically handled in Next.js Server Actions (e.g. sign-in, sign-up).
+
 Unauthenticated users:
 
 - Can access public shared note URLs (read-only)
@@ -563,9 +565,12 @@ Each button calls the relevant TipTap chain: `editor.chain().focus().toggleBold(
 
 - Configure Tailwind in `tailwind.config.ts`
 - Use a minimal design:
-  - Neutral background, card-like note container
+  - Background: use the CSS variable `--background` (defined in `globals.css`) across all pages — no hardcoded `bg-white` or `bg-neutral-*` on page-level backgrounds
+  - Cards/panels use `bg-background` (maps to `--background`) with `border border-neutral-200` for separation
   - Utility classes on components
 - Consider a prose style for read-only content (using `@tailwindcss/typography`)
+- **Color consistency rule:** All pages must inherit the body background from `globals.css`. Never set a page-level background that overrides the theme variable.
+- **Text & interactive elements:** Use `text-foreground` for primary text/links (not `text-neutral-900`), `bg-background` + `text-foreground` for inputs, and `bg-foreground text-background` for primary action buttons — ensures readability in both light and dark modes.
 
 ## 11. Security Considerations
 
