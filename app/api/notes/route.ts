@@ -2,9 +2,31 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { run } from "@/lib/db";
+import { getNotesByUser } from "@/lib/notes";
 
+const PAGE_SIZE = 20;
 const MAX_TITLE_LENGTH = 500;
 const MAX_CONTENT_SIZE = 1_000_000; // 1 MB
+
+export async function GET(req: NextRequest) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const page = Math.max(1, parseInt(req.nextUrl.searchParams.get("page") ?? "1", 10) || 1);
+  const offset = (page - 1) * PAGE_SIZE;
+
+  const { notes, total } = getNotesByUser(session.user.id, PAGE_SIZE, offset);
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  return NextResponse.json({
+    notes: notes.map(({ id, title, isPublic, updatedAt }) => ({ id, title, isPublic, updatedAt })),
+    total,
+    page,
+    totalPages,
+  });
+}
 
 export async function POST(req: NextRequest) {
   const session = await auth.api.getSession({ headers: await headers() });
