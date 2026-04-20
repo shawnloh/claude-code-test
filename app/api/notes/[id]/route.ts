@@ -17,7 +17,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
 
-  const { title, content_json } = body;
+  const { title, content_json, is_public } = body;
 
   if (title.length === 0 || title.length > MAX_TITLE_LENGTH) {
     return NextResponse.json(
@@ -34,7 +34,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: 'content_json must be valid JSON' }, { status: 400 });
   }
 
-  const updated = updateNote(session.user.id, id, title, content_json);
+  const isPublic = typeof is_public === 'boolean' ? is_public : undefined;
+  const updated = updateNote(session.user.id, id, title, content_json, isPublic);
   if (!updated) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
   return NextResponse.json(updated);

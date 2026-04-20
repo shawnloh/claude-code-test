@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
-type Props = { noteId: string };
+type Props = { noteId: string; isPublic: boolean; publicSlug: string | null };
 
-export default function NoteActions({ noteId }: Props) {
+export default function NoteActions({ noteId, isPublic, publicSlug }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const router = useRouter();
 
@@ -18,9 +18,20 @@ export default function NoteActions({ noteId }: Props) {
     dialogRef.current?.close();
   }
 
+  const shareUrl = isPublic && publicSlug ? `/p/${publicSlug}` : null;
+
   return (
     <>
       <div className='flex gap-2'>
+        {shareUrl && (
+          <button
+            type='button'
+            onClick={() => navigator.clipboard.writeText(window.location.origin + shareUrl)}
+            className='cursor-pointer text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors'
+          >
+            Copy link
+          </button>
+        )}
         <Link
           href={`/notes/${noteId}/edit`}
           className='text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors'

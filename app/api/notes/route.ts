@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
 
-  const { title, content_json } = body;
+  const { title, content_json, is_public } = body;
 
   if (title.length === 0 || title.length > MAX_TITLE_LENGTH) {
     return NextResponse.json(
@@ -60,16 +60,18 @@ export async function POST(req: NextRequest) {
 
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
+  const isPublic = is_public === true;
+  const publicSlug = isPublic ? crypto.randomUUID() : null;
 
   try {
     run(
-      `INSERT INTO notes (id, user_id, title, content_json, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [id, session.user.id, title, content_json, now, now],
+      `INSERT INTO notes (id, user_id, title, content_json, is_public, public_slug, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [id, session.user.id, title, content_json, isPublic ? 1 : 0, publicSlug, now, now],
     );
   } catch {
     return NextResponse.json({ error: 'Failed to save note' }, { status: 500 });
   }
 
-  return NextResponse.json({ id }, { status: 201 });
+  return NextResponse.json({ id, publicSlug }, { status: 201 });
 }

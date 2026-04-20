@@ -8,6 +8,7 @@ import NoteEditor from '@/app/components/NoteEditor';
 export default function NewNotePage() {
   const router = useRouter();
   const [title, setTitle] = useState('');
+  const [isPublic, setIsPublic] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const editorRef = useRef<Editor | null>(null);
@@ -30,7 +31,7 @@ export default function NewNotePage() {
       const res = await fetch('/api/notes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, content_json }),
+        body: JSON.stringify({ title, content_json, is_public: isPublic }),
       });
 
       if (!res.ok) {
@@ -68,6 +69,23 @@ export default function NewNotePage() {
         <div className='flex flex-col gap-1'>
           <span className='text-sm font-medium'>Content</span>
           <NoteEditor editorRef={handleEditorRef} />
+        </div>
+
+        <div className='flex flex-col gap-2 border border-neutral-200 rounded-lg p-4'>
+          <label className='flex items-center gap-3 cursor-pointer'>
+            <input
+              type='checkbox'
+              checked={isPublic}
+              onChange={(e) => setIsPublic(e.target.checked)}
+              className='w-4 h-4 rounded'
+            />
+            <span className='text-sm font-medium'>Public sharing</span>
+          </label>
+          {isPublic && (
+            <p className='text-xs text-neutral-500'>
+              A shareable link will be generated when you save.
+            </p>
+          )}
         </div>
 
         {error && <p className='text-sm text-red-600'>{error}</p>}

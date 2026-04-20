@@ -22,7 +22,13 @@ export default async function EditNotePage({ params }: { params: Promise<{ id: s
   return (
     <div className='max-w-4xl mx-auto px-4 py-8'>
       <h1 className='text-2xl font-semibold mb-6'>Edit Note</h1>
-      <EditNoteForm noteId={id} initialTitle={note.title} initialContent={content} />
+      <EditNoteForm
+        noteId={id}
+        initialTitle={note.title}
+        initialContent={content}
+        initialIsPublic={note.isPublic}
+        initialPublicSlug={note.publicSlug}
+      />
     </div>
   );
 }

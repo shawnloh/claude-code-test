@@ -30,7 +30,7 @@ export default async function NoteViewPage({ params }: { params: Promise<{ id: s
         >
           ← Back to notes
         </Link>
-        <NoteActions noteId={id} />
+        <NoteActions noteId={id} isPublic={note.isPublic} publicSlug={note.publicSlug} />
       </div>
       <h1 className='text-3xl font-bold mb-6'>{note.title || 'Untitled note'}</h1>
       <NoteViewer content={content} />

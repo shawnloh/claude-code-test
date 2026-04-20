@@ -60,18 +60,39 @@ export function updateNote(
   noteId: string,
   title: string,
   contentJson: string,
+  isPublic?: boolean,
 ): Note | null {
   const now = new Date().toISOString();
-  run(`UPDATE notes SET title = ?, content_json = ?, updated_at = ? WHERE id = ? AND user_id = ?`, [
-    title,
-    contentJson,
-    now,
-    noteId,
-    userId,
-  ]);
+
+  if (isPublic === undefined) {
+    run(
+      `UPDATE notes SET title = ?, content_json = ?, updated_at = ? WHERE id = ? AND user_id = ?`,
+      [title, contentJson, now, noteId, userId],
+    );
+  } else if (isPublic) {
+    // Enable sharing: generate slug only if one doesn't already exist
+    const existing = getNoteById(userId, noteId);
+    const slug = existing?.publicSlug ?? crypto.randomUUID();
+    run(
+      `UPDATE notes SET title = ?, content_json = ?, is_public = 1, public_slug = ?, updated_at = ? WHERE id = ? AND user_id = ?`,
+      [title, contentJson, slug, now, noteId, userId],
+    );
+  } else {
+    // Disable sharing: clear slug
+    run(
+      `UPDATE notes SET title = ?, content_json = ?, is_public = 0, public_slug = NULL, updated_at = ? WHERE id = ? AND user_id = ?`,
+      [title, contentJson, now, noteId, userId],
+    );
+  }
+
   return getNoteById(userId, noteId);
 }
 
 export function deleteNote(userId: string, noteId: string): void {
   run(`DELETE FROM notes WHERE id = ? AND user_id = ?`, [noteId, userId]);
+}
+
+export function getNoteBySlug(slug: string): Note | null {
+  const row = get<NoteRow>(`SELECT * FROM notes WHERE public_slug = ? AND is_public = 1`, [slug]);
+  return row ? rowToNote(row) : null;
 }

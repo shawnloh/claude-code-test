@@ -9,11 +9,21 @@ type Props = {
   noteId: string;
   initialTitle: string;
   initialContent: object;
+  initialIsPublic: boolean;
+  initialPublicSlug: string | null;
 };
 
-export default function EditNoteForm({ noteId, initialTitle, initialContent }: Props) {
+export default function EditNoteForm({
+  noteId,
+  initialTitle,
+  initialContent,
+  initialIsPublic,
+  initialPublicSlug,
+}: Props) {
   const router = useRouter();
   const [title, setTitle] = useState(initialTitle);
+  const [isPublic, setIsPublic] = useState(initialIsPublic);
+  const [publicSlug, setPublicSlug] = useState<string | null>(initialPublicSlug);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const editorRef = useRef<Editor | null>(null);
@@ -36,7 +46,7 @@ export default function EditNoteForm({ noteId, initialTitle, initialContent }: P
       const res = await fetch(`/api/notes/${noteId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, content_json }),
+        body: JSON.stringify({ title, content_json, is_public: isPublic }),
       });
 
       if (!res.ok) {
@@ -45,11 +55,16 @@ export default function EditNoteForm({ noteId, initialTitle, initialContent }: P
         return;
       }
 
+      const updated = await res.json();
+      setPublicSlug(updated.publicSlug ?? null);
+
       router.push(`/notes/${noteId}/view`);
     } finally {
       setLoading(false);
     }
   }
+
+  const shareUrl = isPublic && publicSlug ? `${window.location.origin}/p/${publicSlug}` : null;
 
   return (
     <form onSubmit={handleSubmit} className='flex flex-col gap-6'>
@@ -71,6 +86,38 @@ export default function EditNoteForm({ noteId, initialTitle, initialContent }: P
       <div className='flex flex-col gap-1'>
         <span className='text-sm font-medium'>Content</span>
         <NoteEditor editorRef={handleEditorRef} initialContent={initialContent} />
+      </div>
+
+      <div className='flex flex-col gap-2 border border-neutral-200 rounded-lg p-4'>
+        <label className='flex items-center gap-3 cursor-pointer'>
+          <input
+            type='checkbox'
+            checked={isPublic}
+            onChange={(e) => setIsPublic(e.target.checked)}
+            className='w-4 h-4 rounded'
+          />
+          <span className='text-sm font-medium'>Public sharing</span>
+        </label>
+        {shareUrl && (
+          <div className='flex items-center gap-2 mt-1'>
+            <input
+              type='text'
+              readOnly
+              value={shareUrl}
+              className='flex-1 bg-neutral-50 border border-neutral-200 rounded px-2 py-1 text-xs text-neutral-600 select-all'
+            />
+            <button
+              type='button'
+              onClick={() => navigator.clipboard.writeText(shareUrl)}
+              className='cursor-pointer text-xs border border-neutral-300 rounded px-2 py-1 hover:bg-neutral-100 transition-colors'
+            >
+              Copy
+            </button>
+          </div>
+        )}
+        {isPublic && !shareUrl && (
+          <p className='text-xs text-neutral-500'>A link will be generated when you save.</p>
+        )}
       </div>
 
       {error && <p className='text-sm text-red-600'>{error}</p>}
