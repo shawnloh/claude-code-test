@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
 type Mark = { type: string };
 type TiptapNode = {
@@ -12,26 +12,22 @@ type TiptapNode = {
 function applyMarks(text: string, marks: Mark[] = []): ReactNode {
   let node: ReactNode = text;
   for (const mark of marks) {
-    if (mark.type === "bold") node = <strong>{node}</strong>;
-    else if (mark.type === "italic") node = <em>{node}</em>;
-    else if (mark.type === "code") node = <code>{node}</code>;
+    if (mark.type === 'bold') node = <strong>{node}</strong>;
+    else if (mark.type === 'italic') node = <em>{node}</em>;
+    else if (mark.type === 'code') node = <code>{node}</code>;
   }
   return node;
 }
 
 function renderNode(node: TiptapNode, index: number): ReactNode {
   switch (node.type) {
-    case "doc":
+    case 'doc':
       return <>{node.content?.map((child, i) => renderNode(child, i))}</>;
 
-    case "paragraph":
-      return (
-        <p key={index}>
-          {node.content?.map((child, i) => renderNode(child, i))}
-        </p>
-      );
+    case 'paragraph':
+      return <p key={index}>{node.content?.map((child, i) => renderNode(child, i))}</p>;
 
-    case "heading": {
+    case 'heading': {
       const level = (node.attrs?.level as number) ?? 1;
       const children = node.content?.map((child, i) => renderNode(child, i));
       if (level === 1) return <h1 key={index}>{children}</h1>;
@@ -39,34 +35,24 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
       return <h3 key={index}>{children}</h3>;
     }
 
-    case "bulletList":
-      return (
-        <ul key={index}>
-          {node.content?.map((child, i) => renderNode(child, i))}
-        </ul>
-      );
+    case 'bulletList':
+      return <ul key={index}>{node.content?.map((child, i) => renderNode(child, i))}</ul>;
 
-    case "listItem":
-      return (
-        <li key={index}>
-          {node.content?.map((child, i) => renderNode(child, i))}
-        </li>
-      );
+    case 'listItem':
+      return <li key={index}>{node.content?.map((child, i) => renderNode(child, i))}</li>;
 
-    case "codeBlock":
+    case 'codeBlock':
       return (
         <pre key={index}>
           <code>{node.content?.map((child, i) => renderNode(child, i))}</code>
         </pre>
       );
 
-    case "horizontalRule":
+    case 'horizontalRule':
       return <hr key={index} />;
 
-    case "text":
-      return (
-        <span key={index}>{applyMarks(node.text ?? "", node.marks)}</span>
-      );
+    case 'text':
+      return <span key={index}>{applyMarks(node.text ?? '', node.marks)}</span>;
 
     default:
       return null;
@@ -76,5 +62,5 @@ function renderNode(node: TiptapNode, index: number): ReactNode {
 type Props = { content: TiptapNode };
 
 export default function NoteViewer({ content }: Props) {
-  return <div className="ProseMirror">{renderNode(content, 0)}</div>;
+  return <div className='ProseMirror'>{renderNode(content, 0)}</div>;
 }

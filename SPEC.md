@@ -525,10 +525,10 @@ Enable at minimum:
 **Example editor config:**
 
 ```typescript
-import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Code from "@tiptap/extension-code";
-import CodeBlock from "@tiptap/extension-code-block";
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Code from '@tiptap/extension-code';
+import CodeBlock from '@tiptap/extension-code-block';
 
 const editor = useEditor({
   extensions: [

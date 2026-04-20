@@ -1,4 +1,4 @@
-import { query, get, run } from "@/lib/db";
+import { query, get, run } from '@/lib/db';
 
 export type Note = {
   id: string;
@@ -38,24 +38,20 @@ function rowToNote(row: NoteRow): Note {
 export function getNotesByUser(
   userId: string,
   limit = 20,
-  offset = 0
+  offset = 0,
 ): { notes: Note[]; total: number } {
   const rows = query<NoteRow>(
     `SELECT * FROM notes WHERE user_id = ? ORDER BY updated_at DESC LIMIT ? OFFSET ?`,
-    [userId, limit, offset]
+    [userId, limit, offset],
   );
-  const countRow = get<{ count: number }>(
-    `SELECT COUNT(*) as count FROM notes WHERE user_id = ?`,
-    [userId]
-  );
+  const countRow = get<{ count: number }>(`SELECT COUNT(*) as count FROM notes WHERE user_id = ?`, [
+    userId,
+  ]);
   return { notes: rows.map(rowToNote), total: countRow?.count ?? 0 };
 }
 
 export function getNoteById(userId: string, noteId: string): Note | null {
-  const row = get<NoteRow>(
-    `SELECT * FROM notes WHERE id = ? AND user_id = ?`,
-    [noteId, userId]
-  );
+  const row = get<NoteRow>(`SELECT * FROM notes WHERE id = ? AND user_id = ?`, [noteId, userId]);
   return row ? rowToNote(row) : null;
 }
 
@@ -63,13 +59,16 @@ export function updateNote(
   userId: string,
   noteId: string,
   title: string,
-  contentJson: string
+  contentJson: string,
 ): Note | null {
   const now = new Date().toISOString();
-  run(
-    `UPDATE notes SET title = ?, content_json = ?, updated_at = ? WHERE id = ? AND user_id = ?`,
-    [title, contentJson, now, noteId, userId]
-  );
+  run(`UPDATE notes SET title = ?, content_json = ?, updated_at = ? WHERE id = ? AND user_id = ?`, [
+    title,
+    contentJson,
+    now,
+    noteId,
+    userId,
+  ]);
   return getNoteById(userId, noteId);
 }
 

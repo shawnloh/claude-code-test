@@ -1,13 +1,13 @@
-import { Database } from "bun:sqlite";
-import { mkdirSync } from "node:fs";
-import { dirname } from "node:path";
+import { Database } from 'bun:sqlite';
+import { mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
 
-const dbPath = process.env.DB_PATH ?? "data/app.db";
+const dbPath = process.env.DB_PATH ?? 'data/app.db';
 mkdirSync(dirname(dbPath), { recursive: true });
 
 export const db = new Database(dbPath);
 
-db.run("PRAGMA journal_mode = WAL");
+db.run('PRAGMA journal_mode = WAL');
 
 // better-auth tables
 db.run(`CREATE TABLE IF NOT EXISTS user (
