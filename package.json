@@ -7,7 +7,9 @@
     "build": "bun run --bun next build",
     "start": "bun run --bun next start",
     "lint": "eslint",
-    "format": "oxfmt"
+    "format": "oxfmt",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "dependencies": {
     "@tiptap/pm": "^3.22.3",
@@ -28,7 +30,8 @@
     "eslint-config-next": "16.1.1",
     "oxfmt": "^0.45.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.4"
   },
   "ignoreScripts": [
     "sharp",
