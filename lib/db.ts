@@ -71,6 +71,13 @@ db.run(`CREATE TABLE IF NOT EXISTS notes (
   FOREIGN KEY (user_id) REFERENCES user(id)
 )`);
 
+// Soft delete migration for user table (idempotent)
+try {
+  db.run(`ALTER TABLE user ADD COLUMN deleted_at TEXT`);
+} catch {
+  // Column already exists
+}
+
 db.run(`CREATE INDEX IF NOT EXISTS idx_notes_user_id ON notes(user_id)`);
 db.run(`CREATE INDEX IF NOT EXISTS idx_notes_public_slug ON notes(public_slug)`);
 db.run(`CREATE INDEX IF NOT EXISTS idx_notes_is_public ON notes(is_public)`);

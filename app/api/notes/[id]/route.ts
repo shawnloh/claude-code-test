@@ -1,7 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
-import { updateNote, deleteNote } from '@/lib/notes';
+import { getNoteById, updateNote, deleteNote } from '@/lib/notes';
+
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const { id } = await params;
+  const note = getNoteById(session.user.id, id);
+  if (!note) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+  return NextResponse.json(note);
+}
 
 const MAX_TITLE_LENGTH = 500;
 const MAX_CONTENT_SIZE = 1_000_000;
